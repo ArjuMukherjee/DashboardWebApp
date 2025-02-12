@@ -13,21 +13,15 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/ .
 
-# Step 3: Setup Nginx + Gunicorn (Final Stage)
-FROM nginx:alpine
-WORKDIR /usr/share/nginx/html
-
-# Copy React build files to Nginx static folder
-COPY --from=frontend /app/frontend/build/ .
-
-# Copy Django backend to /backend
-COPY --from=backend /app/backend /backend
-
-# Copy Nginx configuration file
-COPY backend/nginx.conf /etc/nginx/conf.d/default.conf
+# Step 3: Serve React Frontend Using Django
+# Move React build files into Django static folder
+RUN mkdir -p /app/backend/staticfiles
+COPY --from=frontend /app/frontend/build/ /app/backend/staticfiles/
 
 # Expose necessary ports
-EXPOSE 80
+EXPOSE 10000
 
-# Start Gunicorn (Django) and Nginx
-CMD gunicorn backend.wsgi:application --bind 0.0.0.0:8000 & nginx -g "daemon off;"
+# Start Django Backend & Serve React Frontend
+CMD python manage.py collectstatic --noinput && \
+    python manage.py migrate && \
+    python manage.py runserver 0.0.0.0:10000
