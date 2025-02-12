@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-wt^)zrv4#=)q92(j!^h^laxiuu(&1s+sb**%z=li$#teh40g)!
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    '.localhost', '127.0.0.1', '[::1]'
+    '.localhost', '127.0.0.1', '[::1]', 'DashboardWebApp.onrender.com'
 ]
 
 
@@ -63,6 +63,7 @@ ROOT_URLCONF = 'dashboard.urls'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
+    'https://DashboardWebApp.onrender.com',
 ]
 
 TEMPLATES = [
