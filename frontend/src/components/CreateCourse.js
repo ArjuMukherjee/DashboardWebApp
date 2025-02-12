@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import AxiosInstance from './Axios';
 import { Form, Input, TextArea, Button, Container } from 'semantic-ui-react';
-import 'semantic-ui-css/semantic.min.css';
 
 const CreateCourse = () => {
   const [title, setTitle] = useState('');

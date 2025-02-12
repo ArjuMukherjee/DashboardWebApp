@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AxiosInstance from './Axios';
 import { Form, Input, Select, Button, Container } from 'semantic-ui-react';
-import 'semantic-ui-css/semantic.min.css';
 
 const CreateInstance = () => {
   const [year, setYear] = useState('');

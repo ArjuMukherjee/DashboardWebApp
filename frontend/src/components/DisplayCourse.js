@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import AxiosInstance from './Axios';
 import { useNavigate } from 'react-router-dom';
 import { Table, Button, Container, Header } from 'semantic-ui-react';
-import 'semantic-ui-css/semantic.min.css';
 
 const DisplayCourse = () => {
   const [courses, setCourses] = useState([]);
