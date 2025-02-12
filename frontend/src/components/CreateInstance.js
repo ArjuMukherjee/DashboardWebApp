@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AxiosInstance from './Axios';
+import { Form, Input, Select, Button, Container } from 'semantic-ui-react';
+import 'semantic-ui-css/semantic.min.css';
 
 const CreateInstance = () => {
   const [year, setYear] = useState('');
@@ -7,93 +9,49 @@ const CreateInstance = () => {
   const [courseId, setCourseId] = useState('');
   const [courses, setCourses] = useState([]);
 
-  // Fetch the courses for the dropdown list
-  const fetchCourses = () => {
-    AxiosInstance.get('/api/courses')
-      .then(response => {
-        setCourses(response.data);
-      })
-      .catch(error => {
-        console.error('There was an error fetching the courses!', error);
-      });
-  };
-
   useEffect(() => {
-    fetchCourses();
+    AxiosInstance.get('/api/courses')
+      .then(response => setCourses(response.data))
+      .catch(error => console.error('Error fetching courses:', error));
   }, []);
 
-  // Handle form submission
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-
-    var Year = parseInt(JSON.parse(JSON.stringify(year)));
-    var sem = parseInt(JSON.parse(JSON.stringify(semester)));
-    var course = parseInt(JSON.parse(JSON.stringify(courseId)));
-
-    const data = {
-      'year':Year,
-      'semester':sem,
-      'course':course
-    };
-
-    AxiosInstance.post('/api/instances/', data)
-      .then(response => {
-        alert('Instance created successfully!');
-      })
-      .catch(error => {
-        console.error('There was an error creating the instance!', error);
-        alert('Failed to create instance.');
-      });
-  };
-
-  // Handle form reset
-  const handleRefresh = () => {
-    setYear('');
-    setSemester('');
-    setCourseId('');
-    fetchCourses();
+    const data = { year: parseInt(year), semester: parseInt(semester), course: parseInt(courseId) };
+    try {
+      await AxiosInstance.post('/api/instances/', data);
+      alert('Instance created successfully!');
+    } catch (error) {
+      console.error('Error creating instance:', error);
+      alert('Failed to create instance.');
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label>Year:</label>
-        <input 
-          type="number" 
-          value={year} 
-          onChange={(e) => setYear(e.target.value)} 
-          required 
-        />
-      </div>
-      <div>
-        <label>Semester:</label>
-        <input 
-          type="number" 
-          value={semester}
-          onChange={(e) => setSemester(e.target.value)} 
-          required 
-        />
-      </div>
-      <div>
-        <label>Course:</label>
-        <select 
-          value={courseId} 
-          onChange={(e) => setCourseId(e.target.value)} 
-          required
-        >
-          <option value="" disabled>Select a course</option>
-          {courses.map(course => (
-            <option key={course.id} value={course.id}>
-              {course.title}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <button type="submit">Submit</button>
-        <button type="button" onClick={handleRefresh}>Refresh</button>
-      </div>
-    </form>
+    <Container>
+      <h2>Create Course Instance</h2>
+      <Form onSubmit={handleSubmit}>
+        <Form.Field>
+          <label>Year</label>
+          <Input type="number" value={year} onChange={(e) => setYear(e.target.value)} required />
+        </Form.Field>
+        <Form.Field>
+          <label>Semester</label>
+          <Input type="number" value={semester} onChange={(e) => setSemester(e.target.value)} required />
+        </Form.Field>
+        <Form.Field>
+          <label>Course</label>
+          <Select
+            placeholder="Select a course"
+            options={courses.map(course => ({ key: course.id, text: course.title, value: course.id }))}
+            value={courseId}
+            onChange={(e, { value }) => setCourseId(value)}
+            required
+          />
+        </Form.Field>
+        <Button type="submit" primary>Submit</Button>
+      </Form>
+    </Container>
   );
 };
 
