@@ -1,6 +1,6 @@
 # Step 1: Build React Frontend
 FROM node:18 AS frontend
-WORKDIR /frontend
+WORKDIR /app/frontend
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm install
 COPY frontend/ ./
@@ -8,8 +8,8 @@ RUN npm run build
 
 # Step 2: Set Up Python Environment for Backend
 FROM python:3.9 AS backend
-WORKDIR /backend
-COPY requirements.txt .
+WORKDIR /app/backend
+COPY backend/requirements.txt .
 RUN pip install -r requirements.txt
 COPY backend/ .
 
