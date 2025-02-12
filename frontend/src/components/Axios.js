@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = 'https://dashboardwebapp.onrender.com'
+const baseUrl = 'https://dashboard-backend.onrender.com'
 const AxiosInstance = axios.create({
     baseURL: baseUrl, 
     timeout: 5000, 
