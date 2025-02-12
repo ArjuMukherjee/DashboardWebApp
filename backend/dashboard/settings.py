@@ -63,7 +63,7 @@ ROOT_URLCONF = 'dashboard.urls'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
-    'https://frontend.onrender.com',
+    'https://dashboardwebapp.onrender.com',
 ]
 
 TEMPLATES = [
