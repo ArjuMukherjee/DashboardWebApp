@@ -9,7 +9,7 @@ RUN npm run build
 # Step 2: Set Up Python Environment for Backend
 FROM python:3.9 AS backend
 WORKDIR /app/backend
-COPY backend/requirements.txt .
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 COPY backend/ .
 
