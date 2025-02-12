@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AxiosInstance from './Axios';
 import { useNavigate } from 'react-router-dom';
-import { Table, Button, Container, Input, Header } from 'semantic-ui-react';
 
 const CourseInstances = () => {
   const [instances, setInstances] = useState([]);
@@ -15,11 +14,26 @@ const CourseInstances = () => {
 
   const fetchInstances = async (year = '', sem = '') => {
     try {
-      const url = year && sem ? `/api/instances/${year}/${sem}` : '/api/instances';
+      const url = year && sem 
+        ? `/api/instances/${year}/${sem}` 
+        : '/api/instances';
       const response = await AxiosInstance.get(url);
       setInstances(response.data);
     } catch (error) {
       console.error('Error fetching instances:', error);
+    }
+  };
+
+  const handleView = (year, sem, courseId) => {
+    navigate(`/instances/${year}/${sem}/${courseId}`);
+  };
+
+  const handleDelete = async (year, sem, courseId) => {
+    try {
+      await AxiosInstance.delete(`/api/instances/${year}/${sem}/${courseId}`);
+      fetchInstances();
+    } catch (error) {
+      console.error('Error deleting instance:', error);
     }
   };
 
@@ -28,48 +42,51 @@ const CourseInstances = () => {
   };
 
   return (
-    <Container>
-      <Header as='h2'>Course Instances</Header>
-      <Input 
-        placeholder='Year' 
-        value={year} 
-        onChange={(e) => setYear(e.target.value)}
-        style={{ marginRight: '10px' }}
-      />
-      <Input 
-        placeholder='Semester' 
-        value={sem} 
-        onChange={(e) => setSem(e.target.value)}
-        style={{ marginRight: '10px' }}
-      />
-      <Button primary onClick={handleSearch}>Search</Button>
+    <div>
+      <h1>Course Instances</h1>
       
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Course Title</Table.HeaderCell>
-            <Table.HeaderCell>Course Code</Table.HeaderCell>
-            <Table.HeaderCell>Semester</Table.HeaderCell>
-            <Table.HeaderCell>Year</Table.HeaderCell>
-            <Table.HeaderCell>Actions</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {instances.map(instance => (
-            <Table.Row key={instance.id}>
-              <Table.Cell>{instance.course_title}</Table.Cell>
-              <Table.Cell>{instance.course_code}</Table.Cell>
-              <Table.Cell>{instance.semester}</Table.Cell>
-              <Table.Cell>{instance.year}</Table.Cell>
-              <Table.Cell>
-                <Button primary onClick={() => navigate(`/instances/${instance.year}/${instance.semester}/${instance.course}`)}>View</Button>
-                <Button negative>Delete</Button>
-              </Table.Cell>
-            </Table.Row>
+      <div>
+        <input 
+          type="text" 
+          placeholder="Year" 
+          value={year} 
+          onChange={(e) => setYear(e.target.value)} 
+        />
+        <input 
+          type="text" 
+          placeholder="Semester" 
+          value={sem} 
+          onChange={(e) => setSem(e.target.value)} 
+        />
+        <button onClick={handleSearch}>Search</button>
+      </div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th>Course Title</th>
+            <th>Course Code</th>
+            <th>Semester</th>
+            <th>Year</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {instances.map((instance) => (
+            <tr key={instance.id}>
+              <td>{instance.course_title}</td>
+              <td>{instance.course_code}</td>
+              <td>{instance.semester}</td>
+              <td>{instance.year}</td>
+              <td>
+                <button onClick={() => handleView(instance.year, instance.semester, instance.course)}>View</button>
+                <button onClick={() => handleDelete(instance.year, instance.semester, instance.course)}>Delete</button>
+              </td>
+            </tr>
           ))}
-        </Table.Body>
-      </Table>
-    </Container>
+        </tbody>
+      </table>
+    </div>
   );
 };
 

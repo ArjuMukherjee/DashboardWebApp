@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import AxiosInstance from './Axios';
-import { Form, Input, TextArea, Button, Container } from 'semantic-ui-react';
 
 const CreateCourse = () => {
+
   const [title, setTitle] = useState('');
   const [code, setCode] = useState('');
   const [description, setDescription] = useState('');
 
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const courseData = { title, code, description };
+    const courseData = {
+      title: title,
+      code: code,
+      description: description,
+    };
 
     try {
       const response = await AxiosInstance.post('/api/courses/', courseData);
@@ -26,24 +31,44 @@ const CreateCourse = () => {
   };
 
   return (
-    <Container>
-      <h2>Create Course</h2>
-      <Form onSubmit={handleSubmit}>
-        <Form.Field>
-          <label>Course Title</label>
-          <Input value={title} onChange={(e) => setTitle(e.target.value)} required />
-        </Form.Field>
-        <Form.Field>
-          <label>Course Code</label>
-          <Input value={code} onChange={(e) => setCode(e.target.value)} required />
-        </Form.Field>
-        <Form.Field>
-          <label>Course Description</label>
-          <TextArea value={description} onChange={(e) => setDescription(e.target.value)} required />
-        </Form.Field>
-        <Button type="submit" primary>Submit</Button>
-      </Form>
-    </Container>
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="title">Course Title:</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
+        />
+      </div>
+
+      <div>
+        <label htmlFor="code">Course Code:</label>
+        <input
+          type="text"
+          id="code"
+          name="code"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          required
+        />
+      </div>
+
+      <div>
+        <label htmlFor="description">Course Description:</label>
+        <textarea
+          id="description"
+          name="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
+        ></textarea>
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
   );
 };
 

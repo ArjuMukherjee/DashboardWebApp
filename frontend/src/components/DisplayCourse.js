@@ -1,23 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import AxiosInstance from './Axios';
 import { useNavigate } from 'react-router-dom';
-import { Table, Button, Container, Header } from 'semantic-ui-react';
 
 const DisplayCourse = () => {
   const [courses, setCourses] = useState([]);
   const navigate = useNavigate();
 
+  // Fetch all courses on component mount
   useEffect(() => {
-    AxiosInstance.get('/api/courses')
-      .then(response => setCourses(response.data))
-      .catch(error => console.error('Error fetching courses:', error));
+    fetchCourses();
   }, []);
+
+  const fetchCourses = async () => {
+    try {
+      const response = await AxiosInstance.get('/api/courses');
+      setCourses(response.data); // Assuming the API returns an array of courses
+    } catch (error) {
+      console.error('Error fetching courses:', error);
+    }
+  };
+
+  const viewCourse = (courseId) => {
+    // Handle viewing the course details
+    // Typically, you would navigate to a different route to view course details
+    navigate(`/courses/${courseId}`);
+  };
 
   const deleteCourse = async (courseId) => {
     try {
       await AxiosInstance.delete(`/api/courses/${courseId}`);
       alert('Course deleted successfully!');
-      setCourses(courses.filter(course => course.id !== courseId));
+      // Refresh the list of courses after deletion
+      fetchCourses();
     } catch (error) {
       console.error('Error deleting course:', error);
       alert('Failed to delete course.');
@@ -25,36 +39,36 @@ const DisplayCourse = () => {
   };
 
   return (
-    <Container>
-      <Header as='h2'>Course List</Header>
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Course Title</Table.HeaderCell>
-            <Table.HeaderCell>Course Code</Table.HeaderCell>
-            <Table.HeaderCell>Actions</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
+    <div>
+      <h1>Course List</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Course Title</th>
+            <th>Course Code</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
           {courses.length > 0 ? (
-            courses.map(course => (
-              <Table.Row key={course.id}>
-                <Table.Cell>{course.title}</Table.Cell>
-                <Table.Cell>{course.code}</Table.Cell>
-                <Table.Cell>
-                  <Button primary onClick={() => navigate(`/courses/${course.id}`)}>View</Button>
-                  <Button negative onClick={() => deleteCourse(course.id)}>Delete</Button>
-                </Table.Cell>
-              </Table.Row>
+            courses.map((course) => (
+              <tr key={course.id}>
+                <td>{course.title}</td>
+                <td>{course.code}</td>
+                <td>
+                  <button onClick={() => viewCourse(course.id)}>View</button>
+                  <button onClick={() => deleteCourse(course.id)}>Delete</button>
+                </td>
+              </tr>
             ))
           ) : (
-            <Table.Row>
-              <Table.Cell colSpan='3'>No courses available</Table.Cell>
-            </Table.Row>
+            <tr>
+              <td colSpan="3">No courses available</td>
+            </tr>
           )}
-        </Table.Body>
-      </Table>
-    </Container>
+        </tbody>
+      </table>
+    </div>
   );
 };
 
